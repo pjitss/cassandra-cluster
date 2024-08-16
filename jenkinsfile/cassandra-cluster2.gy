@@ -28,7 +28,7 @@ pipeline {
             steps {
                 // Run the Ansible playbook with parameters passed from Jenkins
                 sh """
-                ansible-playbook -i inventory.ini site.yml \
+                ansible-playbook -i testinvn cassandra-cluster-setup.yml \
                 -e num_cassandra_nodes=${NUM_CASSANDRA_NODES} \
                 -e num_spark_nodes=${NUM_SPARK_NODES} \
                 -e cassandra_ram=${CASSANDRA_RAM} \
