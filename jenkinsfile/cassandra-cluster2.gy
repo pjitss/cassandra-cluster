@@ -3,6 +3,7 @@ pipeline {
 
     parameters {
         string(name: 'NUM_CASSANDRA_NODES', defaultValue: '3', description: 'Number of Cassandra Nodes')
+        string(name: 'NUM_SPARK_NODES', defaultValue: '3', description: 'Number of Spark Nodes')
         string(name: 'CASSANDRA_RAM', defaultValue: '2048M', description: 'RAM for each Cassandra Node')
         string(name: 'CASSANDRA_CPUS', defaultValue: '1.5', description: 'CPUs for each Cassandra Node')
         string(name: 'SPARK_RAM', defaultValue: '1024M', description: 'RAM for each Spark Worker')
@@ -29,6 +30,7 @@ pipeline {
                 sh """
                 ansible-playbook -i inventory.ini site.yml \
                 -e num_cassandra_nodes=${NUM_CASSANDRA_NODES} \
+                -e num_spark_nodes=${NUM_SPARK_NODES} \
                 -e cassandra_ram=${CASSANDRA_RAM} \
                 -e cassandra_cpus=${CASSANDRA_CPUS} \
                 -e spark_ram=${SPARK_RAM} \
