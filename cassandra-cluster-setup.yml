@@ -2,5 +2,5 @@
 ---
 - hosts: all
   roles:
-    - cassandra_spark_cluster
+    - cassandra_cluster
 
