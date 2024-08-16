@@ -9,7 +9,6 @@ pipeline {
         string(name: 'spark_ram', defaultValue: '', description: 'RAM for each Spark Worker')
         string(name: 'spark_cpus', defaultValue: '', description: 'CPUs for each Spark Worker')
     }
-    }
 
     stages {
         stage('Clone Repository') {
@@ -33,3 +32,4 @@ pipeline {
             }
         }
     }
+}    
