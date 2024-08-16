@@ -7,7 +7,7 @@ services:
       CASSANDRA_CLUSTER_NAME: "TestCluster"
       CASSANDRA_SEEDS: "cassandra_node_1"
       MAX_HEAP_SIZE: "{{ cassandra_ram }}"
-      HEAP_NEWSIZE: "1/4 of {{ cassandra_ram }}"  # Usually 1/4 of MAX_HEAP_SIZE
+      HEAP_NEWSIZE: "512M"  # Replace with a specific value
     deploy:
       resources:
         limits:
