@@ -1,0 +1,6 @@
+# site.yml
+---
+- hosts: all
+  roles:
+    - cassandra_spark_cluster
+

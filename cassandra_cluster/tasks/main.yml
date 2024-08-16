@@ -1,0 +1,10 @@
+# tasks/main.yml
+- name: Generate docker-compose.yml from template
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ playbook_dir }}/docker-compose.yml"
+
+- name: Deploy the cluster using docker-compose
+  command: docker-compose up -d
+  args:
+    chdir: "{{ playbook_dir }}"

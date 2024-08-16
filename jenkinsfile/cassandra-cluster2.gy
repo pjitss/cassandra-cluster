@@ -2,17 +2,17 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'num_cassandra_nodes', defaultValue: '', description: 'Number of Cassandra Nodes')
-        string(name: 'cassandra_ram', defaultValue: '', description: 'RAM for each Cassandra Node')
-        string(name: 'cassandra_cpus', defaultValue: '', description: 'CPUs for each Cassandra Node')
-        string(name: 'num_spark_nodes', defaultValue: '', description: 'CPUs for each Cassandra Node')
-        string(name: 'spark_ram', defaultValue: '', description: 'RAM for each Spark Worker')
-        string(name: 'spark_cpus', defaultValue: '', description: 'CPUs for each Spark Worker')
+        string(name: 'NUM_CASSANDRA_NODES', defaultValue: '3', description: 'Number of Cassandra Nodes')
+        string(name: 'CASSANDRA_RAM', defaultValue: '2048M', description: 'RAM for each Cassandra Node')
+        string(name: 'CASSANDRA_CPUS', defaultValue: '1.5', description: 'CPUs for each Cassandra Node')
+        string(name: 'SPARK_RAM', defaultValue: '1024M', description: 'RAM for each Spark Worker')
+        string(name: 'SPARK_CPUS', defaultValue: '0.75', description: 'CPUs for each Spark Worker')
     }
 
     stages {
         stage('Clone Repository') {
             steps {
+                // Clone your repository where the Ansible playbook and role are located
                 git 'https://github.com/pjitss/cassandra-cluster.git'
             }
         }
@@ -21,15 +21,14 @@ pipeline {
             steps {
                 // Run the Ansible playbook, passing the Jenkins parameters as extra vars
                 sh """
-                ansible-playbook -i testinvn site.yml \
-                -e num_cassandra_nodes=${cas_node_count} \
-                -e num_spark_nodes=${spark_node_count} \
-                -e cassandra_ram=${cas_ram_size} \
-                -e cassandra_cpus=${cas_cpu_size} \
-                -e spark_ram=${spark_ram_size} \
-                -e spark_cpus=${spark_cpu_size}
+                ansible-playbook -i inventory.ini site.yml \
+                -e num_cassandra_nodes=${NUM_CASSANDRA_NODES} \
+                -e cassandra_ram=${CASSANDRA_RAM} \
+                -e cassandra_cpus=${CASSANDRA_CPUS} \
+                -e spark_ram=${SPARK_RAM} \
+                -e spark_cpus=${SPARK_CPUS}
                 """
             }
         }
     }
-}    
+}

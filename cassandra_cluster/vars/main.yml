@@ -1,0 +1,6 @@
+# vars/main.yml
+num_cassandra_nodes: 3
+cassandra_ram: "2048M"
+cassandra_cpus: "1.5"
+spark_ram: "1024M"
+spark_cpus: "0.75"
