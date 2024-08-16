@@ -1,6 +1,7 @@
 # site.yml
 ---
 - hosts: all
+  become: yes
   roles:
     - cassandra_cluster
 
