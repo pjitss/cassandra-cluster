@@ -1,6 +1,5 @@
 pipeline {
     agent any
-    deleteDir()
 
     parameters {
         string(name: 'num_cassandra_nodes', defaultValue: '', description: 'Number of Cassandra Nodes')
