@@ -9,27 +9,27 @@ pipeline {
         string(name: 'spark_ram', defaultValue: '', description: 'RAM for each Spark Worker')
         string(name: 'spark_cpus', defaultValue: '', description: 'CPUs for each Spark Worker')
     }
+
+    stage {
+        dir('gitrepo') {
+            git branch: "$branch", url: "git@github.com:pjitss/cassandra-cluster.git"
+        }
     }
 
-    stages {
-        stage('Clone Repository') {
-            steps {
-                git 'git@github.com:pjitss/cassandra-cluster.git'
-            }
-        }
-
-        stage('Run Ansible Playbook') {
-            steps {
-                // Run the Ansible playbook, passing the Jenkins parameters as extra vars
-                sh """
-                ansible-playbook -i testinvn site.yml \
+    stage('Run Ansible Playbook') {
+        dir('gitrepo') {
+            ansiblePlaybook (
+                playbook: 'cassandra-cluster-setup.yml',
+                inventory: "testinvn",
+                extras: """
                 -e num_cassandra_nodes=${cas_node_count} \
                 -e num_spark_nodes=${spark_node_count} \
                 -e cassandra_ram=${cas_ram_size} \
                 -e cassandra_cpus=${cas_cpu_size} \
                 -e spark_ram=${spark_ram_size} \
-                -e spark_cpus=${spark_cpu_size}
-                """
-            }
+                -e spark_cpus=${spark_cpu_size} 
+                """ 
+            )
         }
     }
+}
