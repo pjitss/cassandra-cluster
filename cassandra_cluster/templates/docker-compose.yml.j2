@@ -3,7 +3,7 @@ services:
   spark_master:
     image: bitnami/spark:3.0.1
     environment:
-      SPARK_MODE: "master"
+      - SPARK_MODE=master
     ports:
       - "7077:7077"
       - "8080:8080"
@@ -14,10 +14,10 @@ services:
   cassandra_node_{{ i }}:
     image: cassandra:3.11
     environment:
-      CASSANDRA_CLUSTER_NAME: "{{ cassandra_cluster_name }}"
-      CASSANDRA_SEEDS: "cassandra_node_1"
-      MAX_HEAP_SIZE: "{{ cassandra_max_heap_size }}"
-      HEAP_NEWSIZE: "{{ cassandra_heap_newsize }}"
+      - CASSANDRA_CLUSTER_NAME={{ cassandra_cluster_name }}
+      - CASSANDRA_SEEDS=cassandra_node_1
+      - MAX_HEAP_SIZE={{ cassandra_max_heap_size }}
+      - HEAP_NEWSIZE={{ cassandra_heap_newsize }}
     deploy:
       resources:
         limits:
@@ -33,10 +33,10 @@ services:
   spark_worker_{{ i }}:
     image: bitnami/spark:3.0.1
     environment:
-      SPARK_MODE: "worker"
-      SPARK_MASTER_URL: "spark://spark_master:7077"
-      SPARK_WORKER_CORES: "{{ spark_worker_cores }}"
-      SPARK_WORKER_MEMORY: "{{ spark_worker_memory }}"
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark_master:7077
+      - SPARK_WORKER_CORES={{ spark_worker_cores }}
+      - SPARK_WORKER_MEMORY={{ spark_worker_memory }}
     deploy:
       resources:
         limits:
