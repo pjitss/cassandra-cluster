@@ -1,83 +1,40 @@
 version: '3'
 services:
-  cassandra_node_1:
+  {% for i in range(1, num_cassandra_nodes | int + 1) %}
+  cassandra_node_{{ i }}:
     image: cassandra:3.11
     environment:
       CASSANDRA_CLUSTER_NAME: "TestCluster"
       CASSANDRA_SEEDS: "cassandra_node_1"
-      MAX_HEAP_SIZE: "1024M"
+      MAX_HEAP_SIZE: "{{ cassandra_ram }}"
       HEAP_NEWSIZE: "256M"
     deploy:
       resources:
         limits:
-          cpus: "0.5"
-          memory: "1536M"
+          cpus: "{{ cassandra_cpus }}"
+          memory: "{{ cassandra_ram }}"
     ports:
-      - "9042:9042"
+      - "{{ 9042 + i | int }}:9042"
     networks:
       - cassandra_network
+  {% endfor %}
 
-  cassandra_node_2:
-    image: cassandra:3.11
-    environment:
-      CASSANDRA_CLUSTER_NAME: "TestCluster"
-      CASSANDRA_SEEDS: "cassandra_node_1"
-      MAX_HEAP_SIZE: "1024M"
-      HEAP_NEWSIZE: "256M"
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: "1536M"
-    ports:
-      - "9043:9042"
-    networks:
-      - cassandra_network
-
-  spark_worker_1:
+  {% for i in range(1, num_spark_nodes | int + 1) %}
+  spark_worker_{{ i }}:
     image: bitnami/spark:3.0.1
     environment:
-      SPARK_WORKER_CORES: "0.5"
-      SPARK_WORKER_MEMORY: "1024M"
+      SPARK_WORKER_CORES: "{{ spark_cpus }}"
+      SPARK_WORKER_MEMORY: "{{ spark_ram }}"
     deploy:
       resources:
         limits:
-          cpus: "0.5"
-          memory: "1024M"
+          cpus: "{{ spark_cpus }}"
+          memory: "{{ spark_ram }}"
     ports:
-      - "8081:8081"
+      - "{{ 8081 + i | int }}:8081"
     networks:
       - cassandra_network
-
-  spark_worker_2:
-    image: bitnami/spark:3.0.1
-    environment:
-      SPARK_WORKER_CORES: "0.5"
-      SPARK_WORKER_MEMORY: "1024M"
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: "1024M"
-    ports:
-      - "8082:8081"
-    networks:
-      - cassandra_network
-
-  spark_worker_3:
-    image: bitnami/spark:3.0.1
-    environment:
-      SPARK_WORKER_CORES: "0.5"
-      SPARK_WORKER_MEMORY: "1024M"
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: "1024M"
-    ports:
-      - "8083:8081"
-    networks:
-      - cassandra_network
+  {% endfor %}
 
 networks:
   cassandra_network:
