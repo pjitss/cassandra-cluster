@@ -17,6 +17,7 @@ services:
       - "{{ 9042 + i | int }}:9042"
     networks:
       - cassandra_network
+
   {% endfor %}
 
   {% for i in range(1, num_spark_nodes | int + 1) %}
@@ -34,6 +35,7 @@ services:
       - "{{ 8081 + i | int }}:8081"
     networks:
       - cassandra_network
+
   {% endfor %}
 
 networks:
