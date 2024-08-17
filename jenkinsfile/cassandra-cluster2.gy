@@ -29,11 +29,10 @@ pipeline {
                 sh """
                 ansible-playbook -i testinvn cassandra-cluster-setup.yml \
                 -e num_cassandra_nodes=${NUM_CASSANDRA_NODES} \
-                -e num_spark_nodes=${NUM_SPARK_NODES} \
                 -e cassandra_ram=${CASSANDRA_RAM} \
                 -e cassandra_cpus=${CASSANDRA_CPUS} \
-                -e spark_ram=${SPARK_RAM} \
-                -e spark_cpus=${SPARK_CPUS}
+                -e spark_memory=${SPARK_RAM} \
+                -e spark_cores=${SPARK_CPUS}
                 """
             }
         }
