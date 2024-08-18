@@ -4,6 +4,11 @@ services:
     image: bitnami/spark:3.0.1
     environment:
       SPARK_MODE: "master"
+    deploy:
+      resources:
+        limits:
+          cpus: "{{ spark_cpus }}"
+          memory: "{{ spark_ram }}"
     ports:
       - "7077:7077"
       - "8080:8080"
