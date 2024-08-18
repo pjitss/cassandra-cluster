@@ -2,30 +2,28 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'NUM_CASSANDRA_NODES', defaultValue: '3', description: 'Number of Cassandra Nodes')
-        string(name: 'CASSANDRA_RAM', defaultValue: '2048M', description: 'RAM for each Cassandra Node')
-        string(name: 'CASSANDRA_CPUS', defaultValue: '1.5', description: 'CPUs for each Cassandra Node')
-        string(name: 'SPARK_RAM', defaultValue: '1024M', description: 'RAM for each Spark Worker')
-        string(name: 'SPARK_CPUS', defaultValue: '0.75', description: 'CPUs for each Spark Worker')
+        string(name: 'CASSANDRA_NODES', defaultValue: '')
+        string(name: 'CASSANDRA_RAM', defaultValue: '')
+        string(name: 'CASSANDRA_CPUS', defaultValue: '')
+        string(name: 'SPARK_RAM', defaultValue: '')
+        string(name: 'SPARK_CPUS', defaultValue: '')
     }
 
     stages {
         stage('Clean Workspace') {
             steps {
-                deleteDir() // Deletes the contents of the workspace
+                deleteDir()
             }
         }
 
         stage('Clone Repository') {
             steps {
-                // Clone the repository
-                git branch: 'main', url: 'https://github.com/pjitss/cassandra-cluster.git'
+                git branch: '${branch}', url: 'https://github.com/pjitss/cassandra-cluster.git'
             }
         }
 
         stage('Run Ansible Playbook') {
             steps {
-                // Run the Ansible playbook with parameters passed from Jenkins
                 sh """
                 ansible-playbook -i testinvn cassandra-cluster-setup.yml \
                 -e num_cassandra_nodes=${NUM_CASSANDRA_NODES} \
