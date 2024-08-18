@@ -32,7 +32,7 @@ services:
     image: bitnami/spark:3.0.1
     environment:
       SPARK_MODE: "worker"
-      SPARK_MASTER_URL: "spark://spark_master:7077"
+      SPARK_MASTER_URL: "spark://192.168.0.156:7077"
       SPARK_WORKER_CORES: "{{ spark_cores }}"
       SPARK_WORKER_MEMORY: "{{ spark_memory }}"
     deploy:
