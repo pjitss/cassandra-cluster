@@ -1,10 +1,1 @@
-num_cassandra_nodes: 2
-cassandra_cluster_name: "TestCluster"
-cassandra_max_heap_size: "1024M"
-cassandra_heap_newsize: "256M"
-cassandra_cpus: "1"  # Make sure this is an integer
-cassandra_ram: "1536M"
 
-# Simplified Spark variables
-spark_cores: "1"  # Changed to an integer
-spark_memory: "1G"  # Use integer format

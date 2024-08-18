@@ -1,0 +1,51 @@
+version: '3'
+services:
+  spark_master:
+    image: bitnami/spark:3.0.1
+    environment:
+      SPARK_MODE: "master"
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+    networks:
+      - cassandra_network
+
+{% for i in range(1, num_cassandra_nodes | int + 1) %}
+  cassandra_node_{{ i }}:
+    image: cassandra:3.11
+    environment:
+      CASSANDRA_CLUSTER_NAME: "{{ cassandra_cluster_name }}"
+      CASSANDRA_SEEDS: "cassandra_node_1"
+      MAX_HEAP_SIZE: "{{ cassandra_max_heap_size }}"
+      HEAP_NEWSIZE: "{{ cassandra_heap_newsize }}"
+    deploy:
+      resources:
+        limits:
+          cpus: "{{ cassandra_cpus }}"
+          memory: "{{ cassandra_ram }}"
+    ports:
+      - "{{ 9041 + i }}:9042"
+    networks:
+      - cassandra_network
+
+  spark_worker_{{ i }}:
+    image: bitnami/spark:3.0.1
+    environment:
+      SPARK_MODE: "worker"
+      SPARK_MASTER_URL: "spark://192.168.0.156:7077"
+      SPARK_WORKER_CORES: "{{ spark_cores }}"
+      SPARK_WORKER_MEMORY: "{{ spark_memory }}"
+    deploy:
+      resources:
+        limits:
+          cpus: "{{ spark_cores }}"
+          memory: "{{ spark_memory }}"
+    ports:
+      - "{{ 8080 + i }}:8081"
+    networks:
+      - cassandra_network
+{% endfor %}
+
+networks:
+  cassandra_network:
+    driver: bridge
