@@ -4,6 +4,11 @@ services:
     image: bitnami/spark:3.0.1
     environment:
       SPARK_MODE: "master"
+    deploy:
+      resources:
+        limits:
+          cpus: "{{ spark_cpus }}"
+          memory: "{{ spark_ram }}"
     ports:
       - "7077:7077"
       - "8080:8080"
@@ -25,8 +30,6 @@ services:
           memory: "{{ cassandra_ram }}"
     ports:
       - "{{ 9041 + i }}:9042"
-    volumes:
-      - cassandra_data_{{ i }}:/var/lib/cassandra
     networks:
       - cassandra_network
 
@@ -46,11 +49,6 @@ services:
       - "{{ 8080 + i }}:8081"
     networks:
       - cassandra_network
-{% endfor %}
-
-volumes:
-{% for i in range(1, cassandra_nodes | int + 1) %}
-  cassandra_data_{{ i }}:
 {% endfor %}
 
 networks:
