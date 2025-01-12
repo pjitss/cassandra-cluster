@@ -8,7 +8,7 @@
 
   tasks:
     - name: Write file name
-      shell: echo "{{ file_name }} {{ checksum }}" > "{{ jenkins_ws }}/{{ dir }}/release/release.txt"
+      shell: echo "{{ file_name }}  {{ checksum }}" > "{{ jenkins_ws }}/{{ dir }}/release/release.txt"
 
     - name: Change file permission
       file:
