@@ -23,8 +23,8 @@
       register: nexus_checksum
 
     - name: debug
-      debug:
-        msg: "{{ nexus_checksum.stdout.lines }}"
+      debug: var=nexus_checksum
+        #msg: "{{ nexus_checksum.stdout.lines }}"
 
     - name: read file from checksum
       shell: "cat {{ jenkins_ws }}/{{ dir }}/release/RELEASE_FILE.txt"
