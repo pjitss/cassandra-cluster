@@ -1,8 +1,0 @@
-cassandra_nodes: "{{ CASSANDRA_NODES }}"
-cassandra_cluster_name: "TestCluster"
-cassandra_max_heap_size: "1024M"
-cassandra_heap_newsize: "256M"
-cassandra_cpus: "{{ CASSANDRA_CPUS }}"
-cassandra_ram: "{{ CASSANDRA_RAM }}"
-spark_cpus: "{{ SPARK_CPUS }}"
-spark_ram: "{{ SPARK_RAM }}"

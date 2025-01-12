@@ -1,8 +1,0 @@
-# site.yml
----
-- hosts: all
-  become: yes
-  gather_facts: false
-  roles:
-    - cassandra_cluster
-
