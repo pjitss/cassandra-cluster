@@ -41,6 +41,7 @@
       async: 300
       poll: 10
       register: execscript
+      ignore_errors: yes
 
     - name: display
       debug:
