@@ -10,7 +10,7 @@
     - name: print value
       debug:
         msg:
-          - "app name is: {{ aap_name }}"
+          - "app name is: {{ app_name }}"
 
     - name: upload file to nexus
       shell: "curl -v -k -u {{ nexus_username }}:'{{ nexus_password }}' --upload-file {{ apps[app_name].source_path }}/{{ file_name }} {{ dest_path }}"
