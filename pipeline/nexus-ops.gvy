@@ -1,16 +1,12 @@
 import groovy.json.*
 
-node ("$ENV") {
+node {
 
-    cleanWS ()
+    deleteDir()
 
         stage('Clone Repository') {
                 dir ('playbooks') {
-                    withCredentials([string(credentialsId: 'myjenkins', variable: 'myjenkins')]) {
-                        git branch: "$BRANCH",
-                        credentialsId: 'myjenkins',
-                        url: "https://pjitss:${myjenkins}@github.com/pjitss/nexus-upload.git"
-                }
+                        git branch: "$BRANCH", url: "git@github.com:pjitss/cassandra-cluster.git"
         }
 
         if (task == "upload") {
