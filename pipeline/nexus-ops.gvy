@@ -13,7 +13,7 @@ node ("$ENV") {
                 }
         }
 
-        if (task = "upload") {
+        if (task == "upload") {
             stage("${task}ing zip file") {
                 ansiblePlaybook(
                     playbook: "playbooks/App-Upload.yml",
@@ -22,7 +22,7 @@ node ("$ENV") {
             }
         }
 
-        if (task = "download") {
+        if (task == "download") {
             stage("Verify checksum & ${task}ing zip file") {
                 ansiblePlaybook(
                     playbook: "playbooks/Checksum-Verify.yml",
