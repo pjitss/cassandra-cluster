@@ -3,16 +3,36 @@
   vars_files:
     - vars/common.vars
   tasks:
-
     - name: Check Connectivity
       ping:
 
-    - name: print value
+    - name: Print app name and task
       debug:
         msg:
-          - "app name is: {{ app_name }}"
+          - "App name is: {{ app_name }}"
+          - "Task is: {{ task }}"
 
-    - name: upload file to nexus
-      shell: "curl -v -k -u {{ nexus_username }}:'{{ nexus_password }}' --upload-file {{ apps[app_name].source_path }}/{{ file_name }} {{ dest_path }}"
+    - name: Check if source file exists
+      stat:
+        path: "{{ apps[app_name].source_path }}/{{ file_name }}"
+      register: file_stat
+
+    - name: Fail if source file does not exist
+      fail:
+        msg: "Source file {{ apps[app_name].source_path }}/{{ file_name }} does not exist!"
+      when: not file_stat.stat.exists
+
+    - name: Upload file to Nexus
+      shell: >
+        curl -v -k -u {{ nexus_username }}:'{{ nexus_password }}'
+        --upload-file {{ apps[app_name].source_path }}/{{ file_name }}
+        {{ dest_path }}{{ file_name }}
+      register: curl_output
+      failed_when: curl_output.rc != 0
       when: task == "upload"
+
+    - name: Debug curl output
+      debug:
+        var: curl_output
+
       
