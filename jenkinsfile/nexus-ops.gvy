@@ -6,7 +6,7 @@ node {
 
         stage('Clone Repository') {
                 dir ('playbooks') {
-                        git branch: "$branch", url: "https://github.com:pjitss/cassandra-cluster.git"
+                        git branch: "$branch", url: "https://github.com/pjitss/cassandra-cluster.git"
         }
 
         if (task == "upload") {
