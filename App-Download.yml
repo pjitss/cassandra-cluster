@@ -1,0 +1,44 @@
+- hosts: "{{ COMP }}"
+  gather_facts: false
+  vars_files:
+    - vars/common.vars
+  tasks:
+
+    - name: Check Connectivity
+      ping:
+      when: task == "download"
+
+    - name: print value
+      debug:
+        msg:
+          - "app name is: {{ aap_name }}"
+      when: task == "download"
+
+    - name: ensure destination derectory exists
+      file:
+        path: "{{ apps[app_name].server_dest_path }}"
+        state: directory
+      when: task == "download"
+
+    - name: check if file exists
+      stat:
+        path: "{{ file_name }}"
+      register: file_result
+      when: task == "download"
+
+    - name: show status of test file
+      debug:
+        msg: "{{ file_result }}"
+      when: task == "download"
+
+    - name: "download test file from nexus"
+      get_url:
+        url: "{{ dest_path }}{{ file_name }}"
+        dest: "{{ apps[app_name].server_dest_path }}"
+        validate_certs: false
+        url_username: '{{ nexus_username }}'
+        url_password: '{{ nexus_password }}'
+      when:
+        - not file_result.stat.exists
+        - COMP == "download"
+

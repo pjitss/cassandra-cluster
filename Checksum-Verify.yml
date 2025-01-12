@@ -1,0 +1,47 @@
+- hosts: localhost
+  gather_facts: false
+  become: yes
+  become_method: sudo
+  become_user: root
+  vars:
+    dir: playbooks
+
+  tasks:
+    - name: write file name
+      shell: echo "{{ file_name }} {{ checksum }}" > "{{ jenkins_ws }}/{{ dir }}/release/release.txt"
+
+    - name: change file permission
+      file:
+        path: "{{ jenkins_ws }}/{{ dir }}/release/{{item}}"
+        mode: '0755'
+      with_items:
+        - release.txt
+        - verify_checksum.sh
+
+    - name: read file from checksum
+      shell: "cat {{ jenkins_ws }}/{{ dir }}/release/release.txt"
+      register: nexus_checksum
+
+    - name: debug
+      debug:
+        msg: "{{ nexus_checksum.stdout.lines }}"
+
+    - name: read file from checksum
+      shell: "cat {{ jenkins_ws }}/{{ dir }}/release/RELEASE_FILE.txt"
+      register: git_checksum
+
+    - name: debug
+      debug:
+        msg: "{{ git_checksum.stdout.lines }}"
+
+    - name: execute script
+      args:
+        chdir: "{{ jenkins_ws }}/{{ dir }}/release/"
+      command: 'sh verify_checksum.sh'
+      async: 300
+      poll: 10
+      register: execscript
+
+    - name: display
+      debug:
+        msg: "{{ execscript.stdout.lines }}"
