@@ -31,8 +31,8 @@
       register: git_checksum
 
     - name: debug
-      debug:
-        msg: "{{ git_checksum.stdout.lines }}"
+      debug: var=git_checksum
+        #msg: "{{ git_checksum.stdout.lines }}"
 
     - name: execute script
       args:
