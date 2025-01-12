@@ -13,7 +13,7 @@ node {
             stage("${task}ing zip file") {
                 ansiblePlaybook(
                     playbook: "playbooks/App-Upload.yml",
-                    extras: "-i \"playbooks/env/${envname}/${envname}.inv\" -e comp=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${TASK}"
+                    extras: "-i \"playbooks/env/${envname}/${envname}.inv\" -e COMP=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${TASK}"
                 )
             }
         }
@@ -22,12 +22,12 @@ node {
             stage("Verify checksum & ${task}ing zip file") {
                 ansiblePlaybook(
                     playbook: "playbooks/Checksum-Verify.yml",
-                    extras: " -e comp=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${TASK} -e jenkins_ws=${env.WORKSPACE} -e checksum=${CHECKSUM}"
+                    extras: " -e COMP=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${TASK} -e jenkins_ws=${env.WORKSPACE} -e checksum=${CHECKSUM}"
                 )
 
                 ansiblePlaybook(
                     playbook: "playbooks/App-Download.yml",
-                    extras: "-i \"playbooks/env/${envname}/${envname}.inv\" -e comp=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${TASK}"
+                    extras: "-i \"playbooks/env/${envname}/${envname}.inv\" -e COMP=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${TASK}"
                 )
             }
         }
