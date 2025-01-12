@@ -7,34 +7,34 @@
     dir: playbooks
 
   tasks:
-    - name: write file name
+    - name: Write file name
       shell: echo "{{ file_name }} {{ checksum }}" > "{{ jenkins_ws }}/{{ dir }}/release/release.txt"
 
-    - name: change file permission
+    - name: Change file permission
       file:
-        path: "{{ jenkins_ws }}/{{ dir }}/release/{{item}}"
+        path: "{{ jenkins_ws }}/{{ dir }}/release/{{ item }}"
         mode: '0755'
       with_items:
         - release.txt
         - verify_checksum.sh
 
-    - name: read file from checksum
+    - name: Read file from checksum
       shell: "cat {{ jenkins_ws }}/{{ dir }}/release/release.txt"
       register: nexus_checksum
 
-    - name: debug
+    - name: Debug Nexus checksum
       debug:
-        msg: "{{ nexus_checksum.stdout.lines }}"
+        msg: "{{ nexus_checksum.stdout.splitlines() }}"
 
-    - name: read file from checksum
+    - name: Read file from checksum
       shell: "cat {{ jenkins_ws }}/{{ dir }}/release/RELEASE_FILE.txt"
       register: git_checksum
 
-    - name: debug
+    - name: Debug Git checksum
       debug:
-        msg: "{{ git_checksum.stdout.lines }}"
+        msg: "{{ git_checksum.stdout.splitlines() }}"
 
-    - name: execute script
+    - name: Execute script
       args:
         chdir: "{{ jenkins_ws }}/{{ dir }}/release/"
       command: 'sh verify_checksum.sh'
@@ -42,6 +42,6 @@
       poll: 10
       register: execscript
 
-    - name: display
+    - name: Display script output
       debug:
-        msg: "{{ execscript.stdout.lines }}"
+        msg: "{{ execscript.stdout | default('No output available').splitlines() }}"
