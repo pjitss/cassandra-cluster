@@ -43,6 +43,4 @@
       register: execscript
       ignore_errors: yes
 
-    - name: display
-      debug:
-        msg: "{{ execscript.stdout.lines }}"
+    
