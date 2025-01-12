@@ -1,0 +1,36 @@
+- name: Update RELEASE_FILE.txt on localhost
+  hosts: localhost
+  gather_facts: false
+  vars:
+    dir: 'playbooks'
+    release_path: 'release/RELEASE_FILE.txt'
+
+  tasks:
+    - name: Ensure RELEASE_FILE.txt exists
+      file:
+        path: "{{ jenkins_ws }}/{{ dir }}/{{ release_path }}"
+        state: touch
+
+    - name: Add new entry to RELEASE_FILE.txt if not present
+      lineinfile:
+        path: "{{ jenkins_ws }}/{{ dir }}/{{ release_path }}"
+        line: "{{ checksum }}"
+        state: present
+        create: yes
+
+    - name: Stage changes
+      command:
+        cmd: git add "{{ release_path }}"
+      chdir: "{{ jenkins_ws }}/{{ dir }}"
+
+    - name: Commit changes to git
+      command:
+        cmd: git commit -m "Updated RELEASE_FILE.txt with {{ checksum }}"
+      chdir: "{{ jenkins_ws }}/{{ dir }}"
+      register: commit_output
+      failed_when: commit_output.rc not in [0, 1]
+
+    - name: Push changes to remote repository
+      command:
+        cmd: git push
+      chdir: "{{ jenkins_ws }}/{{ dir }}"

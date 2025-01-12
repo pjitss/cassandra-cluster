@@ -31,5 +31,14 @@ node {
                 )
             }
         }
+
+        if (task == "addrelease") {
+            stage("${task}to release file") {
+                ansiblePlaybook(
+                    playbook: "playbooks/update_release.yml",
+                    extras: " -e file_name=${FILENAME} -e task=${TASK} -e jenkins_ws=${env.WORKSPACE} -e checksum=${CHECKSUM}"
+                )
+            }
+        }
     }
 }

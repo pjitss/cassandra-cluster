@@ -1,0 +1,37 @@
+- name: Update RELEASE_FILE.txt on localhost
+  hosts: localhost
+  vars:
+    dir: 'playbooks'
+    release_path: 'release/RELEASE_FILE.txt'
+  
+  tasks:
+    - name: read file from RELEASE_FILE.txt
+      shell: "cat {{ jenkins_ws }}/{{ dir }}/{{ release_path }}"
+      register: existing_value
+
+    - name: "add new entry to RELEASE_FILE.txt"
+      lineinfile:
+        path: "{{ jenkins_ws }}/{{ dir }}/{{ release_path }}"
+        line: "{{ checksum }}"
+        state: present
+        create: yes
+
+    - name: read file from RELEASE_FILE.txt
+      shell: "cat {{ jenkins_ws }}/{{ dir }}/{{ release_path }}"
+      register: added_value
+
+    - name: "print added value"
+      debug: var=added_value
+
+    - name: commit changes to git
+      command:
+        cmd: >
+          git commit -am "updated RELEASE_FILE.txt with {{ file_name }}"
+        chdir: "{{ dir }}"
+      register: commit_output
+      failed_when: commit_output.rc not in [0, 1]
+
+    - name: push the change
+      command:
+        cmd: git push
+        chdir: "{{ dir }}"
