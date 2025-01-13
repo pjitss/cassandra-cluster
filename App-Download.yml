@@ -8,11 +8,11 @@
       win_ping:
       when: task == "download"
 
-    - name: print value
-      debug:
-        msg:
-          - "app name is: {{ aap_name }}"
-      when: task == "download"
+#    - name: print value
+#      debug:
+#        msg:
+#          - "app name is: {{ aap_name }}"
+#      when: task == "download"
 
     - name: ensure destination derectory exists
       win_file:
