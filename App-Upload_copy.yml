@@ -3,18 +3,33 @@
   vars_files:
     - vars/common.vars
   tasks:
-
     - name: Check Connectivity
       win_ping:
 
-    - name: print value
+    - name: Print variable values
       debug:
         msg:
-          - "app name is: {{ app_name }}"
+          - "App name is: {{ app_name }}"
+          - "File name is: {{ file_name }}"
+          - "Destination path is: {{ dest_path }}"
 
-    - name: upload file to nexus
-#      shell: "curl -v -k -u {{ nexus_username }}:'{{ nexus_password }}' --upload-file {{ apps[app_name].source_path }}/{{ file_name }} {{ dest_path }}"
-      shell: > 
-        curl -v -k -u {{ nexus_username }}:'{{ nexus_password }}' --upload-file "{{ apps[app_name].source_path }}\\{{ file_name }}" {{ dest_path }}
+    - name: Validate file extension
+      fail:
+        msg: "The file '{{ file_name }}' must have a .txt extension. Job failed!"
+      when: file_name is not regex(".*\\.txt$")
+
+    - name: Debug upload command
+      debug:
+        msg: >
+          curl -v -k -u {{ nexus_username }}:'{{ nexus_password }}'
+          --upload-file "{{ apps[app_name].source_path }}\\{{ file_name }}"
+          {{ dest_path }}
+
+    - name: Upload file to Nexus
+      shell: >
+        curl -v -k -u {{ nexus_username }}:'{{ nexus_password }}'
+        --upload-file "{{ apps[app_name].source_path }}\\{{ file_name }}"
+        {{ dest_path }}
       when: task == "upload"
+
       
