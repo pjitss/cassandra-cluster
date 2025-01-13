@@ -27,7 +27,7 @@
 
     - name: Upload file to Nexus
       win_shell: >
-        curl -v -k -u {{ nexus_username }}:'{{ nexus_password }}'
+        curl.exe -v -k -u {{ nexus_username }}:'{{ nexus_password }}'
         --upload-file "{{ apps[app_name].source_path }}\\{{ file_name }}"
         {{ dest_path }}
       when: task == "upload"
