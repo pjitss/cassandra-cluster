@@ -1,5 +1,7 @@
 [upload]
-192.168.0.112 ansible_host=192.168.0.112 ansible_user=jits ansible_ssh_pass=redhat
+#192.168.0.112 ansible_host=192.168.0.112 ansible_user=jits ansible_ssh_pass=redhat
+192.168.0.155 ansible_connection=winrm ansible_winrm_transport=basic ansible_winrm_server_cert_validation=ignore ansible_user=jits ansible_password=redhat@123
 
 [download]
-192.168.0.112 ansible_host=192.168.0.112 ansible_user=jits ansible_ssh_pass=redhat
+#192.168.0.112 ansible_host=192.168.0.112 ansible_user=jits ansible_ssh_pass=redhat
+192.168.0.155 ansible_connection=winrm ansible_winrm_transport=basic ansible_winrm_server_cert_validation=ignore ansible_user=jits ansible_password=redhat@123

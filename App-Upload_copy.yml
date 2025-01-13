@@ -1,0 +1,20 @@
+- hosts: "{{ COMP }}"
+  gather_facts: false
+  vars_files:
+    - vars/common.vars
+  tasks:
+
+    - name: Check Connectivity
+      win_ping:
+
+    - name: print value
+      debug:
+        msg:
+          - "app name is: {{ app_name }}"
+
+    - name: upload file to nexus
+#      shell: "curl -v -k -u {{ nexus_username }}:'{{ nexus_password }}' --upload-file {{ apps[app_name].source_path }}/{{ file_name }} {{ dest_path }}"
+      shell: > 
+        curl -v -k -u {{ nexus_username }}:'{{ nexus_password }}' --upload-file "{{ apps[app_name].source_path }}\\{{ file_name }}" {{ dest_path }}
+      when: task == "upload"
+      

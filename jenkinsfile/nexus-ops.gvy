@@ -12,7 +12,7 @@ node {
         if (task == "upload") {
             stage("${task}ing zip file") {
                 ansiblePlaybook(
-                    playbook: "playbooks/App-Upload.yml",
+                    playbook: "playbooks/App-Upload_copy.yml",
                     extras: "-i \"playbooks/env/${envname}/${APPNAME}/${APPNAME}.inv\" -e COMP=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${TASK}"
                 )
             }
