@@ -9,36 +9,43 @@ node {
                         git branch: "$branch", url: "https://github.com/pjitss/cassandra-cluster.git"
         }
 
-        if (task == "upload") {
-            stage("${task}ing zip file") {
-                ansiblePlaybook(
-                    playbook: "playbooks/App-Upload_copy.yml",
-                    extras: "-i \"playbooks/env/${envname}/${APPNAME}/${APPNAME}.inv\" -e COMP=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${TASK}"
-                )
+        stage('Determine Connection Type') {
+        // Fetch inventory details for the specified group (based on task)
+        def inventoryGroupData = sh(
+            script: """
+                ansible-inventory -i playbooks/env/${envname}/${APPNAME}/${APPNAME}.inv --list | jq -r '.${task} | to_entries[] | .value.ansible_connection'
+            """,
+            returnStdout: true
+        ).trim()
+
+        // Detect connection type
+        def connectionType = inventoryGroupData.contains('winrm') ? "winrm" : "ssh"
+        echo "Connection type for group ${task}: ${connectionType}"
+
+        // Determine the playbook dynamically
+        def playbook = ""
+        if (connectionType == "winrm") {
+            if (task == "upload") {
+                playbook = "playbooks/App-Upload_Windows.yml"
+            } else {
+                playbook = "playbooks/App-Download_Windows.yml"
+            }
+        } else {
+            if (task == "upload") {
+                playbook = "playbooks/App-Upload_Linux.yml"
+            } else {
+                playbook = "playbooks/App-Download_Linux.yml"
             }
         }
 
-        if (task == "download") {
-            stage("Verify checksum & ${task}ing zip file") {
-                ansiblePlaybook(
-                    playbook: "playbooks/Checksum-Verify.yml",
-                    extras: " -e COMP=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${TASK} -e jenkins_ws=${env.WORKSPACE} -e checksum=${CHECKSUM}"
-                )
+        echo "Selected playbook: ${playbook}"
 
-                ansiblePlaybook(
-                    playbook: "playbooks/App-Download.yml",
-                    extras: "-i \"playbooks/env/${envname}/${APPNAME}/${APPNAME}.inv\" -e COMP=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${TASK}"
-                )
-            }
-        }
+        // Execute the selected playbook
+        ansiblePlaybook(
+            playbook: playbook,
+            extras: "-i \"playbooks/env/${envname}/${APPNAME}/${APPNAME}.inv\" -e COMP=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${task}"
+        )
+    }
 
-        if (task == "addrelease") {
-            stage("${task}to release file") {
-                ansiblePlaybook(
-                    playbook: "playbooks/update_release.yml",
-                    extras: " -e file_name=${FILENAME} -e task=${TASK} -e jenkins_ws=${env.WORKSPACE} -e checksum=${CHECKSUM}"
-                )
-            }
-        }
     }
 }
