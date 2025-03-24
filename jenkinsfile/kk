@@ -1,0 +1,35 @@
+stage('Determine Connection Type') {
+    // Fetch connection type from inventory
+    def connectionType = sh(
+        script: '''
+            grep -A1 "\\[${task}\\]" playbooks/env/${envname}/${APPNAME}/${APPNAME}.inv | grep ansible_connection | awk -F "ansible_connection=" "{print \\$2}" | awk "{print \\$1}" | tr -d "\'"
+        ''',
+        returnStdout: true
+    ).trim()
+
+    echo "Detected connection type: ${connectionType}"
+
+    // Determine the playbook dynamically
+    def playbook = ""
+    if (connectionType == "winrm") {
+        if (task == "upload") {
+            playbook = "playbooks/App-Upload_Windows.yml"
+        } else {
+            playbook = "playbooks/App-Download_Windows.yml"
+        }
+    } else {
+        if (task == "upload") {
+            playbook = "playbooks/App-Upload_Linux.yml"
+        } else {
+            playbook = "playbooks/App-Download_Linux.yml"
+        }
+    }
+
+    echo "Selected playbook: ${playbook}"
+
+    // Execute the selected playbook
+    ansiblePlaybook(
+        playbook: playbook,
+        extras: "-i \"playbooks/env/${envname}/${APPNAME}/${APPNAME}.inv\" -e COMP=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${task}"
+    )
+}

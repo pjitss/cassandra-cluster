@@ -1,0 +1,37 @@
+
+
+stage('Determine Connection Type') {
+    // Fetch connection type from inventory
+    def connectionType = sh(
+        script: '''
+            grep -A1 "\\[${task}\\]" playbooks/env/${envname}/${APPNAME}/${APPNAME}.inv | grep ansible_connection | awk -F "ansible_connection=" "{print \\$2}" | awk "{print \\$1}" | tr -d "\'"
+        ''',
+        returnStdout: true
+    ).trim()
+
+for above code block i got a scenario that when TASk=upload then should run grep -A1 "\\[${TASK}\\]"
+
+but if TASK=download then should run grep -A1 "\\[${TASK}_${ENTITY}_${APPTYPE}\\]"
+
+
+stage('Determine Connection Type') {
+    // Fetch connection type from inventory
+    def connectionType = sh(
+        script: '''
+            if [ "${TASK}" = "upload" ]; then
+                grep -A1 "\\[${TASK}\\]" playbooks/env/${envname}/${APPNAME}/${APPNAME}.inv | grep ansible_connection | awk -F "ansible_connection=" "{print \\$2}" | awk "{print \\$1}" | tr -d "\'"
+            else
+                grep -A1 "\\[${TASK}_${ENTITY}_${APPTYPE}\\]" playbooks/env/${envname}/${APPNAME}/${APPNAME}.inv | grep ansible_connection | awk -F "ansible_connection=" "{print \\$2}" | awk "{print \\$1}" | tr -d "\'"
+            fi
+        ''',
+        returnStdout: true
+    ).trim()
+
+    echo "Detected connection type: ${connectionType}"
+}
+
+script: '''
+            if [ "${TASK}" = "upload" ]; then
+                COMP = ${TASK}
+                grep -A1 "\\[${TASK}\\]" playbooks/env/${envname}/${APPNAME}/${APPNAME}.inv | grep ansible_connection | awk -F "ansible_connection=" "{print \\$2}" | awk "{print \\$1}" | tr -d "\'"
+            

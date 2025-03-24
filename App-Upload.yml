@@ -1,5 +1,7 @@
 - hosts: "{{ COMP }}"
   gather_facts: false
+  vars:
+    nfs_path: '/mynfs/{{ ansible_date_time.date }}_activefile'
   vars_files:
     - vars/common.vars
   tasks:
@@ -34,5 +36,33 @@
     - name: Debug curl output
       debug:
         var: curl_output
+
+- name: Manage file upload and deletion
+  hosts: "{{ COMP }}"
+  gather_facts: false
+  vars_files:
+    - vars/common.vars
+  tasks:
+    - name: Upload file to Nexus
+      win_shell: |
+        curl.exe -v -k -u {{ nexus_username }}:'{{ nexus_password }}'
+        --upload-file "{{ apps[app_name].source_path }}\\{{ file_name }}"
+        {{ dest_path }}
+      register: upload_result
+
+    - name: Debug upload result
+      debug:
+        var: upload_result
+
+    - name: Schedule file deletion after 10 minutes
+      win_shell: |
+        $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -Command Remove-Item -Path '{{ apps[app_name].source_path }}\\{{ file_name }}' -Force"
+        $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(10)
+        Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "Delete_{{ file_name }}" -Description "Delete {{ file_name }} after 10 minutes"
+
+    - name: Remove the scheduled task after execution
+      win_shell: |
+        Unregister-ScheduledTask -TaskName "Delete_{{ file_name }}" -Confirm:$false
+      when: task == "upload"
 
       
