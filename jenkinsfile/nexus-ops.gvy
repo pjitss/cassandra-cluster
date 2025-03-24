@@ -9,13 +9,17 @@ node {
                     git branch: "$branch", url: "https://github.com/pjitss/cassandra-cluster.git"
         }
 
-        stage('Determine Connection Type') {
+        stage('print variables') {
         // Fetch inventory details for the specified group (based on task)
             print "task is ${task}"
             print "envname is ${envname}"
             print "appname is ${appname}"
             print "ENTITY is ${ENTITY}"
             print "APPTYPE is  ${APPTYPE}"
+        }
+
+        stage('Determine Connection Type') {
+        // Fetch inventory details for the specified group (based on task)
             def connectionType = sh(
             script: """
                 if [ "${task}" = "upload" ] || [ "${task}" = "migrate" ]; then
