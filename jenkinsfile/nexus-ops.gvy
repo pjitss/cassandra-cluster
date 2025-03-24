@@ -15,7 +15,7 @@ node {
             print "envname is ${envname}"
             print "appname is ${appname}"
             print "ENTITY is ${ENTITY}"
-            print "APPTYPE is ${APPTYPE}"
+            print "APPTYPE is  ${APPTYPE}"
             def connectionType = sh(
             script: """
                 if [ "${task}" = "upload" ] || [ "${task}" = "migrate" ]; then
