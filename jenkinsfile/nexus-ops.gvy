@@ -11,23 +11,18 @@ node {
 
         stage('Determine Connection Type') {
         // Fetch inventory details for the specified group (based on task)
-        def connectionType = sh(
-        script: """
-            if [ "${task}" = "upload" ] || [ "${task}" = "migrate" ]; then
-                grep -A1 "\\[${task}\\]\" playbooks/env/${envname}/${appname}/${appname}.inv | grep ansible_connection | awk -F 'ansible_connection=' '{print $2}' | awk '{print $1}' | tr -d "'"
-            else
-                grep -A1 "\\[${ENTITY}_${APPTYPE}\\]" playbooks/env/${envname}/${appname}/${appname}.inv | grep ansible_connection | awk -F 'ansible_connection=' '{print $2}' | awk '{print $1}' | tr -d "'"
-            fi
-        """,
-        returnStdout: true
-        ).trim()
+            def connectionType = sh(
+            script: """
+                if [ "${task}" = "upload" ] || [ "${task}" = "migrate" ]; then
+                    grep -A1 "\\[${task}\\]\" playbooks/env/${envname}/${appname}/${appname}.inv | grep ansible_connection | awk -F 'ansible_connection=' '{print $2}' | awk '{print $1}' | tr -d "'"
+                else
+                    grep -A1 "\\[${ENTITY}_${APPTYPE}\\]" playbooks/env/${envname}/${appname}/${appname}.inv | grep ansible_connection | awk -F 'ansible_connection=' '{print $2}' | awk '{print $1}' | tr -d "'"
+                fi
+            """,
+            returnStdout: true
+            ).trim()
 
-        print "connection type is : ${connectionType}"
-
-        ansiblePlaybook(
-            playbook: playbook,
-            extras: "-i \"playbooks/env/${envname}/${APPNAME}/${APPNAME}.inv\" -e COMP=${task} -e app_name=${APPNAME} -e file_name=${FILENAME} -e ENVNAME=${ENVNAME} -e task=${task} -e entity=${ENTITY} -e apptype=${APPTYPE}"
-        )
+            print "connection type is : ${connectionType}"
     }
 
     }
